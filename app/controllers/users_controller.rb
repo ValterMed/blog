@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :inactive, :active]
 
+  protect_from_forgery with: :null_session
   # GET /users
   # GET /users.json
   def index
@@ -49,6 +50,27 @@ class UsersController < ApplicationController
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def inactive
+    response = if @user.desactivate
+                { message: 'Success', status: 200}
+              else
+                { message:  @user.errors, status: 500}
+              end
+
+    render json: response, status: response[:status]
+  end
+
+  def active
+    response = if @user.reactivate
+                { message: 'Success', status: 200}
+              else
+                { message:  @user.errors, status: 500}
+              end
+
+    render json: response, status: response[:status]
+    #@user.reactivate
   end
 
   # DELETE /users/1
